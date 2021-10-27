@@ -15,7 +15,7 @@ export default function NavigationCard({
   ctaText,
 }) {
   return (
-    <Card sx={{ maxWidth: 480 }}>
+    <Card sx={{ width: 480 }}>
       <CardMedia sx={{ height: 270 }} image={imgSrc} title={imgAlt} />
       <CardContent>
         <Typography component="h3" variant="h5" gutterBottom>

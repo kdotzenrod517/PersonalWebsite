@@ -8,7 +8,6 @@ import NavigationCard from "@components/NavigationCard";
 
 // Special thanks to this blog: https://www.ansonlowzf.com/create-a-website-with-material-ui-v5-nextjs/?fbclid=IwAR0aOlc5L_xvJ6aRLu0oiMHzrsfWgfmc_FdZiVlKhMdS5tbuMERPErBcuyE
 // For helping walk me through this site!
-
 const Homepage = () => {
   return (
     <>
