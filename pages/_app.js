@@ -7,11 +7,28 @@ import Header from "../components/Header";
 import "/styles/globals.css";
 import theme from "../styles/theme";
 import Footer from "@components/Footer";
+import { useEffect } from "react";
+import { pageview } from "/lib/gtag";
 
 const clientSideEmotionCache = createEmotionCache();
 
 export default function MyApp(props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const {
+    Component,
+    emotionCache = clientSideEmotionCache,
+    pageProps,
+    router,
+  } = props;
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      pageview(url, document.title);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>
