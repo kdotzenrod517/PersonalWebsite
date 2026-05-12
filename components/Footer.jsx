@@ -24,7 +24,10 @@ const Footer = () => {
   const { data } = useSWR("/api/page-views", fetcher, {
     revalidateOnFocus: false,
   });
-  const views = data?.pageViews;
+  const views =
+    typeof data?.pageViews === "number" && data.pageViews > 0
+      ? data.pageViews
+      : null;
 
   return (
     <Box
@@ -56,7 +59,7 @@ const Footer = () => {
         </Stack>
         <Typography align="center" variant="body2" sx={{ color: "text.secondary" }}>
           © {new Date().getFullYear()} Krista Dotzenrod
-          {typeof views === "number" ? ` · ${views.toLocaleString()} views` : ""}
+          {views ? ` · ${views.toLocaleString()} views` : ""}
         </Typography>
       </Container>
     </Box>
