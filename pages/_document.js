@@ -2,7 +2,7 @@ import * as React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import createEmotionCache from "../styles/createEmotionCache";
-import { GA_TRACKING_ID } from "/lib/gtag";
+import { GA_TRACKING_ID, isGaEnabled } from "/lib/gtag";
 
 import theme from "../styles/theme";
 
@@ -11,26 +11,36 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          {/* Global Site Tag (gtag.js) - Google Analytics */}
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+          {/* Global Site Tag (gtag.js) - Google Analytics 4 */}
+          {isGaEnabled && (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${GA_TRACKING_ID}');
+                gtag('config', '${GA_TRACKING_ID}', { send_page_view: true });
               `,
-            }}
-          />
+                }}
+              />
+            </>
+          )}
           {/* PWA primary color */}
-          <meta name="theme-color" content={theme.palette.primary.main} />
+          <meta name="theme-color" content={theme.palette.background.default} />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossOrigin="anonymous"
+          />
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           />
         </Head>
         <body>

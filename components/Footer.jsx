@@ -1,55 +1,64 @@
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { Facebook, Instagram, Twitter } from "@mui/icons-material";
-import MuiNextLink from "@components/MuiNextLink";
+import IconButton from "@mui/material/IconButton";
+import GitHub from "@mui/icons-material/GitHub";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import MailOutline from "@mui/icons-material/MailOutline";
 import useSWR from "swr";
 
+const socials = [
+  { label: "GitHub", href: "https://github.com/kdotzenrod517", Icon: GitHub },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/krista-dotzenrod",
+    Icon: LinkedIn,
+  },
+  { label: "Email", href: "mailto:kdotzenrod517@gmail.com", Icon: MailOutline },
+];
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
 const Footer = () => {
-  const { data } = useSWR(
-    `/api/page-views?slug=/`,
-    async (url) => {
-      const res = await fetch(url);
-      return res.json();
-    },
-    { revalidateOnFocus: false }
-  );
-  const views = data?.pageViews || 0;
+  const { data } = useSWR("/api/page-views", fetcher, {
+    revalidateOnFocus: false,
+  });
+  const views = data?.pageViews;
+
   return (
-    <Box component="footer" sx={{ py: 5, bgcolor: "primary.main" }}>
-      <script
-        async
-        src="https://api.countapi.xyz/hit/kristadotzenrod.com/visits?  callback={callbackName}"
-      ></script>
-      <Stack direction="row" justifyContent="center" spacing={4} sx={{ mb: 5 }}>
-        <MuiNextLink
-          sx={{ textDecoration: "none", color: "common.white" }}
-          href="https://www.facebook.com/krista.dotzenrod/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Facebook fontSize="large" />
-        </MuiNextLink>
-        <MuiNextLink
-          sx={{ textDecoration: "none", color: "common.white" }}
-          href="https://www.instagram.com/kdotzenrod/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Instagram fontSize="large" />
-        </MuiNextLink>
-        <MuiNextLink
-          sx={{ textDecoration: "none", color: "common.white" }}
-          href="https://twitter.com/Krista517"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Twitter fontSize="large" />
-        </MuiNextLink>
-      </Stack>
-      <Typography align="center" color="common.white">
-        {new Date().getFullYear()} || Krista Dotzenrod || {views} views
-      </Typography>
+    <Box
+      component="footer"
+      sx={{
+        py: 6,
+        bgcolor: "background.paper",
+        borderTop: "1px solid rgba(255,255,255,0.08)",
+      }}
+    >
+      <Container maxWidth="md">
+        <Stack direction="row" justifyContent="center" spacing={1.5} sx={{ mb: 3 }}>
+          {socials.map(({ label, href, Icon }) => (
+            <IconButton
+              key={label}
+              component="a"
+              href={href}
+              target={href.startsWith("mailto:") ? undefined : "_blank"}
+              rel="noopener noreferrer"
+              aria-label={label}
+              sx={{
+                color: "text.secondary",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              <Icon />
+            </IconButton>
+          ))}
+        </Stack>
+        <Typography align="center" variant="body2" sx={{ color: "text.secondary" }}>
+          © {new Date().getFullYear()} Krista Dotzenrod
+          {typeof views === "number" ? ` · ${views.toLocaleString()} views` : ""}
+        </Typography>
+      </Container>
     </Box>
   );
 };

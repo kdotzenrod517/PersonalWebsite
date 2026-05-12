@@ -2,174 +2,127 @@ import { useForm } from "react-hook-form";
 import emailjs from "emailjs-com";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import SendIcon from "@mui/icons-material/Send";
+import SectionHeading from "@components/SectionHeading";
+
+const EMAIL_PATTERN =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const ContactPage = () => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
-  // Function that displays a success toast on bottom right of the page when form submission is successful
   const toastifySuccess = () => {
-    toast("Form sent!", {
+    toast("Thanks — your message is on its way!", {
       position: "bottom-right",
       autoClose: 5000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: false,
-      className: "submit-feedback success",
       toastId: "notifyToast",
     });
   };
 
-  // Function called on submit that uses emailjs to send email of valid contact form
-  const onSubmit = async (data) => {
-    // Destrcture data object
-    const { name, email, subject, message } = data;
-
+  const onSubmit = async ({ name, email, subject, message }) => {
     try {
-      const templateParams = {
-        name,
-        email,
-        subject,
-        message,
-      };
-
       await emailjs.send(
         process.env.NEXT_PUBLIC_SERVICE_ID,
         process.env.NEXT_PUBLIC_TEMPLATE_ID,
-        templateParams,
+        { name, email, subject, message },
         process.env.NEXT_PUBLIC_USER_ID
       );
-
       reset();
       toastifySuccess();
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      toast.error("Something went wrong sending that. Try again?", {
+        position: "bottom-right",
+        autoClose: 5000,
+      });
     }
   };
 
   return (
-    <div
-      className="ContactForm"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        paddingTop: 30,
-        paddingBottom: 30,
-      }}
-    >
-      <div className="container">
-        <div className="row">
-          <div className="col-12 text-center">
-            <div className="contactForm">
-              <form
-                id="contact-form"
-                onSubmit={handleSubmit(onSubmit)}
-                noValidate
-              >
-                {/* Row 1 of form */}
-                <div className="row formRow">
-                  <div className="col-6">
-                    <input
-                      type="text"
-                      name="name"
-                      {...register("name", {
-                        required: {
-                          value: true,
-                          message: "Please enter your name",
-                        },
-                        maxLength: {
-                          value: 30,
-                          message: "Please use 30 characters or less",
-                        },
-                      })}
-                      className="form-control formInput"
-                      placeholder="Name"
-                    ></input>
-                    {errors.name && (
-                      <span className="errorMessage">
-                        {errors.name.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="col-6">
-                    <input
-                      type="email"
-                      name="email"
-                      {...register("email", {
-                        required: true,
-                        pattern:
-                          /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-                      })}
-                      className="form-control formInput"
-                      placeholder="Email address"
-                    ></input>
-                    {errors.email && (
-                      <span className="errorMessage">
-                        Please enter a valid email address
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {/* Row 2 of form */}
-                <div className="row formRow">
-                  <div className="col-6">
-                    <input
-                      type="text"
-                      name="subject"
-                      {...register("subject", {
-                        required: {
-                          value: true,
-                          message: "Please enter a subject",
-                        },
-                        maxLength: {
-                          value: 75,
-                          message: "Subject cannot exceed 75 characters",
-                        },
-                      })}
-                      className="form-control formInput"
-                      placeholder="Subject"
-                    ></input>
-                    {errors.subject && (
-                      <span className="errorMessage">
-                        {errors.subject.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {/* Row 3 of form */}
-                <div className="row formRow">
-                  <div className="col-6">
-                    <textarea
-                      rows={3}
-                      name="message"
-                      {...register("message", {
-                        required: true,
-                      })}
-                      className="form-control formInput"
-                      placeholder="Message"
-                    ></textarea>
-                    {errors.message && (
-                      <span className="errorMessage">
-                        Please enter a message
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <button className="submit-btn" type="submit">
-                  Submit
-                </button>
-              </form>
-            </div>
-            <ToastContainer />
-          </div>
-        </div>
-      </div>
-    </div>
+    <Container maxWidth="sm" sx={{ pt: { xs: 14, md: 16 }, pb: 12 }}>
+      <SectionHeading kicker="Contact" title="Get in touch" />
+      <Typography sx={{ color: "text.secondary", mb: 5 }}>
+        Have a question, an opportunity, or just want to say hi? Drop a note below
+        — or email me directly at{" "}
+        <Box
+          component="a"
+          href="mailto:kdotzenrod517@gmail.com"
+          sx={{ color: "primary.main" }}
+        >
+          kdotzenrod517@gmail.com
+        </Box>
+        .
+      </Typography>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Stack spacing={3}>
+          <TextField
+            label="Name"
+            fullWidth
+            error={Boolean(errors.name)}
+            helperText={errors.name?.message}
+            {...register("name", {
+              required: "Please enter your name",
+              maxLength: { value: 30, message: "Please use 30 characters or less" },
+            })}
+          />
+          <TextField
+            label="Email address"
+            type="email"
+            fullWidth
+            error={Boolean(errors.email)}
+            helperText={errors.email && "Please enter a valid email address"}
+            {...register("email", { required: true, pattern: EMAIL_PATTERN })}
+          />
+          <TextField
+            label="Subject"
+            fullWidth
+            error={Boolean(errors.subject)}
+            helperText={errors.subject?.message}
+            {...register("subject", {
+              required: "Please enter a subject",
+              maxLength: { value: 75, message: "Subject cannot exceed 75 characters" },
+            })}
+          />
+          <TextField
+            label="Message"
+            fullWidth
+            multiline
+            rows={5}
+            error={Boolean(errors.message)}
+            helperText={errors.message && "Please enter a message"}
+            {...register("message", { required: true })}
+          />
+          <Box>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              startIcon={<SendIcon />}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Sending…" : "Send message"}
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
+      <ToastContainer />
+    </Container>
   );
 };
 

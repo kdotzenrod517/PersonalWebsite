@@ -16,8 +16,9 @@ const Offset = styled("div")(({ theme }) => theme.mixins.toolbar);
 
 export const navLinks = [
   { title: `home`, path: `/` },
-  { title: `about me`, path: `/about-me` },
+  { title: `about`, path: `/about-me` },
   { title: `contact`, path: `/contact` },
+  { title: `resume`, path: `/files/resume.pdf`, external: true },
 ];
 
 const Header = () => {
